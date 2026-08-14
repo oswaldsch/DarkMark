@@ -38,19 +38,71 @@ h1, h2 {
   width: 100%;
   height: 70px;
   background-color: #1a1b20;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: center;
   z-index: 1000;
 }
 
 .navbar-title {
   font-family: "Space Grotesk", sans-serif;
   margin: 0;
+  grid-column: 2;
+  justify-self: center;
+}
+
+#newNoteModal[open] {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  background-color: #1a1b20;
+  color: #b8bac6;
+  border: 1px solid #28292e;
+  border-radius: 10px;
+  padding: 24px;
+  width: min(1000px, 90vw);
+  height: min(1200px, 90vh);
+  overflow-y: auto;
+}
+
+#newNoteModal::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+#openModalBtn {
+    grid-column: 3;
+    justify-self: end;
+    margin-right: 10px;
+}
+
+#openModalBtn svg {
+  width: 25px;
+  height: 25px;
+}
+
+#noteTitleInput, #noteContentInput {
+    background-color: #1a1b20;
+    color: #b8bac6;
+    border: 1px solid #37489b;
+    outline: none;
+    padding: 5px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+#noteContentInput {
+    width: 100%;
+    height: 100%;
 }
 
 .note-area {
-    margin-bottom: auto;
+  margin-bottom: auto;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .note-card {
@@ -68,6 +120,10 @@ h1, h2 {
   font-weight: 800;
 }
 
+.note-desc {
+  zoom: 80%;
+}
+
 footer {
   background-color: #1a1b20;
   height: 100px;
@@ -79,4 +135,39 @@ footer {
 .accent-text {
   color: #37489b;
   font-family: "Space Grotesk", sans-serif;
+}
+
+.accent-button {
+  background-color: #37489b;
+  color: #b8bac6;
+  outline: none;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.greyed-button {
+  background-color: #595a5e;
+  color: #b8bac6;
+  outline: none;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.buttonGroup {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.buttonGroup button {
+    width: 50%;
+}
+
+#cancelModalBtn {
+    margin-right: 10px;
+}
+
+#saveModalBtn {
+    margin-right: 10px;
 }
