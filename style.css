@@ -1,0 +1,82 @@
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("fonts/SpaceGrotesk.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/Inter.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #111216;
+  color: #b8bac6;
+  font-family: "Inter", sans-serif;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2 {
+  color: #ffffff;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 70px;
+  background-color: #1a1b20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.navbar-title {
+  font-family: "Space Grotesk", sans-serif;
+  margin: 0;
+}
+
+.note-area {
+    margin-bottom: auto;
+}
+
+.note-card {
+  height: 300px;
+  width: 400px;
+  background-color: #28292e;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 16px;
+}
+
+.note-title {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-weight: 800;
+}
+
+footer {
+  background-color: #1a1b20;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.accent-text {
+  color: #37489b;
+  font-family: "Space Grotesk", sans-serif;
+}
