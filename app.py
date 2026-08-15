@@ -11,6 +11,7 @@ app = FastAPI()
 class NoteData(BaseModel):
     title: str
     content: str
+    id: int
 
 def init_db():
     conn = sqlite3.connect("notes.db")
@@ -30,18 +31,30 @@ init_db()
 def index():
     return FileResponse("static/index.html")
 
-@app.post("/api/new_note")
-def new_note(note: NoteData):
+@app.post("/api/new")
+def new_note():
     conn = sqlite3.connect("notes.db")
     cursor = conn.cursor()
 
-    cursor = cursor.execute("INSERT INTO notes (title, content) VALUES (?, ?)", (note.title, note.content))
+    cursor = cursor.execute("INSERT INTO notes (title, content) VALUES (?, ?)", ("", ""))
 
     note_id = cursor.lastrowid
     conn.commit()
     conn.close()
 
-    return {"status": "success", "id": note_id, "title": note.title}
+    return {"status": "success", "id": note_id}
+
+@app.post("/api/save")
+def save_note(note: NoteData):
+    conn = sqlite3.connect("notes.db")
+    cursor = conn.cursor()
+
+    cursor = cursor.execute("UPDATE notes SET title = ?, content = ? WHERE id = ?", (note.title, note.content, note.id))
+
+    conn.commit()
+    conn.close()
+
+    return {"status": "success"}
 
 @app.get("/api/notes")
 def get_notes():
