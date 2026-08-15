@@ -166,6 +166,12 @@ async function getNotes() {
       noteCard.append(noteTitle, deleteBtn)
       noteArea.appendChild(noteCard)
     })
+    if (notes.length == 0) {
+      const placeholderText = document.createElement("h3")
+      placeholderText.classList.add("placeholder-text")
+      placeholderText.innerText = "No notes yet; Add one by clicking the button in the top right!"
+      noteArea.append(placeholderText)
+    }
   } catch (error) {
     console.error("Error fetching notes:", error)
   }
