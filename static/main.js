@@ -61,6 +61,12 @@ function changeCurrentNote(note) {
   titleInput.id = "noteTitleInput"
   titleInput.value = note.title
   titleInput.oninput = debouncedSave
+  titleInput.onkeydown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      contentArea.focus()
+    }
+  }
   titleInput.placeholder = "Note title"
 
   const contentArea = document.createElement("textarea")
@@ -74,24 +80,46 @@ function changeCurrentNote(note) {
   noteEditArea.append(idSpan, titleInput, contentArea)
 }
 
+async function deleteNote(id) {
+  await fetch(`/api/delete/${id}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  })
+  getNotes()
+}
+
 async function getNotes() {
   try {
     const response = await fetch("/api/notes")
     const { notes } = await response.json()
     const noteArea = document.getElementById("noteArea")
     noteArea.replaceChildren()
-    notes.forEach((note, index) => {
+    notes.forEach((note) => {
       const noteCard = document.createElement("div")
       noteCard.classList.add("note-card")
-      noteCard.innerHTML = `<h2 class="note-title">${note.title}</h2><div class="note-delete" id="noteDeleteBtn"><img src="/assets/trash.svg"></div>`;
-      noteCard.onclick = () => {
-        changeCurrentNote(note)
+      noteCard.onclick = () => changeCurrentNote(note)
+
+      const noteTitle = document.createElement("h2")
+      noteTitle.classList.add("note-title")
+      noteTitle.textContent = note.title
+
+      const deleteBtn = document.createElement("div")
+      deleteBtn.id = "noteDeleteBtn"
+      deleteBtn.classList.add("note-delete")
+      deleteBtn.onclick = (e) => {
+        e.stopPropagation()
+        deleteNote(note.id)
       }
-      noteArea.appendChild(noteCard);
-    });
-  }
-  catch (error) {
-    console.error("Error creating new note:", error);
+
+      const trashImg = document.createElement("img")
+      trashImg.src = "/assets/trash.svg"
+
+      deleteBtn.appendChild(trashImg)
+      noteCard.append(noteTitle, deleteBtn)
+      noteArea.appendChild(noteCard)
+    })
+  } catch (error) {
+    console.error("Error fetching notes:", error)
   }
 }
 

@@ -69,4 +69,16 @@ def get_notes():
     notes = [dict(row) for row in rows]
     return {"notes": notes}
 
+@app.delete("/api/delete/{id}")
+def delete_note(id: int):
+    conn = sqlite3.connect("notes.db")
+    cursor = conn.cursor()
+
+    cursor = cursor.execute("DELETE FROM notes WHERE id = ?", (id,))
+
+    conn.commit()
+    conn.close()
+
+    return {"status": "success"}
+
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
