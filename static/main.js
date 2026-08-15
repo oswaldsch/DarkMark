@@ -83,7 +83,7 @@ async function getNotes() {
     notes.forEach((note, index) => {
       const noteCard = document.createElement("div")
       noteCard.classList.add("note-card")
-      noteCard.innerHTML = `<h2 class="note-title">${note.title}</h1><div class="note-delete" id="noteDeleteBtn"><img src="/assets/trash.svg"></svg></div>`;
+      noteCard.innerHTML = `<h2 class="note-title">${note.title}</h2><div class="note-delete" id="noteDeleteBtn"><img src="/assets/trash.svg"></div>`;
       noteCard.onclick = () => {
         changeCurrentNote(note)
       }
