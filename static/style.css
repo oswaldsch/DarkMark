@@ -87,11 +87,13 @@ h1, h2 {
   grid-column: 3;
   justify-self: end;
   margin-right: 10px;
+  width: 45px;
+  height: 45px;
 }
 
 #newNoteBtn svg {
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
 }
 
 #noteTitleInput, #noteContentInput {
@@ -110,8 +112,10 @@ h1, h2 {
 }
 
 #noteTitleInput {
-    font-family: "Space Grotesk";
-    font-size: 25px;
+  font-family: "Space Grotesk";
+  font-size: 25px;
+  padding: 16px;
+  grid-column: 2;
 }
 
 .note-area {
@@ -202,4 +206,146 @@ footer {
 
 .note-delete:hover img {
   opacity: 1;
+}
+
+.toggle-group {
+  display: flex;
+  background-color: var(--surface-raised);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 3px;
+  margin: 5px;
+  grid-column: 3;
+  justify-self: end;
+}
+
+.toggle-btn {
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: 150ms;
+}
+
+.toggle-btn.active {
+  background-color: var(--accent);
+  color: var(--text-bright);
+}
+
+.toggle-btn img {
+    width: 15px;
+    height: 15px;
+}
+
+.title-group {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    width: 100%;
+}
+
+/* Markdown styling */
+
+#noteContentInput h1,
+#noteContentInput h2,
+#noteContentInput h3,
+#noteContentInput h4,
+#noteContentInput h5,
+#noteContentInput h6 {
+  color: var(--text-bright);
+  margin: 16px 0 8px 0;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+#noteContentInput p {
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+#noteContentInput a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+#noteContentInput a:hover {
+  text-decoration: underline;
+}
+
+#noteContentInput blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 12px;
+  margin: 8px 0;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+#noteContentInput code {
+  background-color: var(--surface-raised);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+#noteContentInput pre {
+  background-color: var(--surface-raised);
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+#noteContentInput pre code {
+  background: none;
+  padding: 0;
+}
+
+#noteContentInput table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px 0;
+}
+
+#noteContentInput th {
+  background-color: var(--surface-raised);
+  color: var(--text-bright);
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+#noteContentInput td {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+}
+
+#noteContentInput tr:nth-child(even) {
+  background-color: var(--surface-raised);
+}
+
+#noteContentInput ul,
+#noteContentInput ol {
+  padding-left: 24px;
+  margin: 8px 0;
+}
+
+#noteContentInput li {
+  margin: 4px 0;
+  line-height: 1.6;
+}
+
+#noteContentInput hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+#noteContentInput img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+#noteContentInput strong {
+  color: var(--text-bright);
 }

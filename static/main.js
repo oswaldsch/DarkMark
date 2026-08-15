@@ -48,6 +48,29 @@ function debouncedSave() {
   debounceTimer = setTimeout(saveNote, 500)
 }
 
+function togglePreview(new_state, note) {
+  const contentArea = document.getElementById("noteContentInput")
+  if (new_state) {
+    const newContentArea = document.createElement("div")
+    newContentArea.id = "noteContentInput"
+    newContentArea.innerHTML = marked.parse(contentArea.value)
+    newContentArea.dataset.raw = contentArea.value
+
+    contentArea.replaceWith(newContentArea)
+  }
+  else {
+    const newContentArea = document.createElement("textarea")
+    newContentArea.id = "noteContentInput"
+    newContentArea.textContent = contentArea.dataset.raw
+    newContentArea.oninput = () => {
+      debouncedSave()
+    }
+    newContentArea.placeholder = "Note content"
+
+    contentArea.replaceWith(newContentArea)
+  }
+}
+
 function changeCurrentNote(note) {
   const noteEditArea = document.getElementById("noteEditArea")
   noteEditArea.replaceChildren()
@@ -56,6 +79,9 @@ function changeCurrentNote(note) {
   idSpan.id = "noteId"
   idSpan.hidden = true
   idSpan.textContent = note.id
+
+  const titleGroup = document.createElement("div")
+  titleGroup.classList.add("title-group")
 
   const titleInput = document.createElement("input")
   titleInput.id = "noteTitleInput"
@@ -68,6 +94,28 @@ function changeCurrentNote(note) {
     }
   }
   titleInput.placeholder = "Note title"
+  titleGroup.append(titleInput)
+
+  const previewToggleGroup = document.createElement("div")
+  previewToggleGroup.classList.add("toggle-group")
+
+  const rawBtn = document.createElement("button")
+  rawBtn.classList.add("toggle-btn", "active")
+  const rawImg = document.createElement("img")
+  rawImg.src = "/assets/raw.svg"
+  rawBtn.append(rawImg)
+
+  const previewBtn = document.createElement("button")
+  previewBtn.classList.add("toggle-btn")
+  const previewImg = document.createElement("img")
+  previewImg.src = "/assets/preview.svg"
+  previewBtn.append(previewImg)
+
+  rawBtn.onclick = () => { rawBtn.classList.add("active"); previewBtn.classList.remove("active"); togglePreview(false, note) }
+  previewBtn.onclick = () => { previewBtn.classList.add("active"); rawBtn.classList.remove("active"); togglePreview(true, note) }
+
+  previewToggleGroup.append(rawBtn, previewBtn)
+  titleGroup.append(previewToggleGroup)
 
   const contentArea = document.createElement("textarea")
   contentArea.id = "noteContentInput"
@@ -77,7 +125,7 @@ function changeCurrentNote(note) {
   }
   contentArea.placeholder = "Note content"
 
-  noteEditArea.append(idSpan, titleInput, contentArea)
+  noteEditArea.append(idSpan, titleGroup, contentArea)
 }
 
 async function deleteNote(id) {
