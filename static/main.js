@@ -1,4 +1,7 @@
 let debounceTimer
+const menu = document.getElementById("popoverMenu");
+const headingBtn = document.getElementById("headingBtn");
+const headingMenu = document.getElementById("headingMenu");
 
 async function newNote() {
   try {
@@ -24,7 +27,7 @@ async function saveNote() {
   const payload = {
     id: noteID,
     title: noteTitleInput.value,
-    content: noteContentInput.value
+    content: noteContentInput.innerText
   }
 
   try {
@@ -53,14 +56,15 @@ function togglePreview(new_state, note) {
   if (new_state) {
     const newContentArea = document.createElement("div")
     newContentArea.id = "noteContentInput"
-    newContentArea.innerHTML = marked.parse(contentArea.value)
-    newContentArea.dataset.raw = contentArea.value
+    newContentArea.innerHTML = marked.parse(contentArea.innerText)
+    newContentArea.dataset.raw = contentArea.innerText
 
     contentArea.replaceWith(newContentArea)
   }
   else {
-    const newContentArea = document.createElement("textarea")
+    const newContentArea = document.createElement("div")
     newContentArea.id = "noteContentInput"
+    newContentArea.contentEditable = true;
     newContentArea.textContent = contentArea.dataset.raw
     newContentArea.oninput = () => {
       debouncedSave()
@@ -117,8 +121,9 @@ function changeCurrentNote(note) {
   previewToggleGroup.append(rawBtn, previewBtn)
   titleGroup.append(previewToggleGroup)
 
-  const contentArea = document.createElement("textarea")
+  const contentArea = document.createElement("div")
   contentArea.id = "noteContentInput"
+  contentArea.contentEditable = true;
   contentArea.textContent = note.content
   contentArea.oninput = () => {
     debouncedSave()
@@ -176,5 +181,144 @@ async function getNotes() {
     console.error("Error fetching notes:", error)
   }
 }
+
+function getSelectionRange(element) {
+  const selection = window.getSelection();
+  if (selection.rangeCount === 0) return { start: 0, end: 0 };
+
+  const range = selection.getRangeAt(0);
+
+  const preCaretRangeStart = range.cloneRange();
+  preCaretRangeStart.selectNodeContents(element);
+  preCaretRangeStart.setEnd(range.startContainer, range.startOffset);
+  const start = preCaretRangeStart.toString().length;
+
+  const preCaretRangeEnd = range.cloneRange();
+  preCaretRangeEnd.selectNodeContents(element);
+  preCaretRangeEnd.setEnd(range.endContainer, range.endOffset);
+  const end = preCaretRangeEnd.toString().length;
+
+  return { start, end };
+}
+
+function insertAtIndex(element, index, textToInsert) {
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  let currentIndex = 0;
+  let node = walker.nextNode();
+
+  while (node) {
+    const nodeLength = node.textContent.length;
+
+    if (currentIndex + nodeLength >= index) {
+      const offsetInNode = index - currentIndex;
+      const before = node.textContent.slice(0, offsetInNode);
+      const after = node.textContent.slice(offsetInNode);
+      node.textContent = before + textToInsert + after;
+      return;
+    }
+    currentIndex += nodeLength;
+    node = walker.nextNode();
+  }
+
+  element.appendChild(document.createTextNode(textToInsert));
+}
+
+function getLineStart(text, index) {
+  const lastBreak = text.lastIndexOf("\n", index - 1);
+  return lastBreak === -1 ? 0 : lastBreak + 1;
+}
+
+function formatText(action) {
+  const contentArea = document.getElementById("noteContentInput")
+  const { start, end } = getSelectionRange(contentArea)
+  if (action == "bold") {
+    insertAtIndex(contentArea, start, "**");
+    insertAtIndex(contentArea, end + 2, "**"); // After the first function ran it shifted the index
+  } else if (action == "italic") {
+    insertAtIndex(contentArea, start, "*");
+    insertAtIndex(contentArea, end + 1, "*");
+  } else if (action == "strikethrough") {
+    insertAtIndex(contentArea, start, "~~");
+    insertAtIndex(contentArea, end + 2, "~~");
+  } else if (action === "heading") {
+    const level = "#".repeat(arguments[1]) + " ";
+    const lineStart = getLineStart(contentArea.innerText, start);
+    insertAtIndex(contentArea, lineStart, level);
+  }
+  saveNote();
+}
+
+async function copySelection() {
+  const contentArea = document.getElementById("noteContentInput")
+  const { start, end } = getSelectionRange(contentArea);
+    const selectedText = contentArea.innerText.slice(start, end);
+  try {
+    await navigator.clipboard.writeText(selectedText);
+  } catch (e) {
+    console.error("Copy failed:", e);
+  }
+}
+
+async function pasteClipboard() {
+  const contentArea = document.getElementById("noteContentInput")
+  try {
+    const clipboardText = await navigator.clipboard.readText();
+    const { start, end } = getSelectionRange(contentArea);
+    const text = contentArea.innerText;
+    const newText = text.slice(0, start) + clipboardText + text.slice(end);
+    contentArea.innerText = newText;
+  } catch (e) {
+    console.error("Paste failed:", e);
+  }
+}
+
+document.addEventListener("mouseup", () => {
+  const selection = window.getSelection();
+  const selectedText = selection.toString().trim();
+  if (selectedText.length === 0 || selection.rangeCount === 0) return;
+
+  const range = selection.getRangeAt(0);
+  let rect = range.getBoundingClientRect();
+
+  if (rect.width === 0 && rect.height === 0) {
+    const rects = range.getClientRects();
+    if (rects.length > 0) rect = rects[0];
+  }
+
+  if (rect.width === 0 && rect.height === 0) {
+    return;
+  }
+
+  menu.style.display = "block";
+  let topPosition = rect.top + window.scrollY - menu.offsetHeight - 8;
+  let leftPosition = rect.left + window.scrollX + (rect.width / 2) - (menu.offsetWidth / 2);
+  menu.style.top = `${topPosition}px`;
+  menu.style.left = `${leftPosition}px`;
+});
+
+document.addEventListener("mousedown", (e) => {
+  if (!menu.contains(e.target)) {
+    menu.style.display = "none";
+  }
+});
+
+headingBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    headingMenu.classList.toggle("open");
+});
+
+headingMenu.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-level]");
+    if (!btn) return;
+    const level = btn.dataset.level;
+    formatText("heading", level);
+    headingMenu.classList.remove("open");
+});
+
+document.addEventListener("mousedown", (e) => {
+    if (!headingMenu.contains(e.target) && e.target !== headingBtn) {
+        headingMenu.classList.remove("open");
+    }
+});
 
 getNotes()

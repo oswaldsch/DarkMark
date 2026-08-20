@@ -20,6 +20,22 @@
                 <h3 class="placeholder-text">Click a note to show it here</h3>
             </div>
         </div>
+        <div id="popoverMenu">
+            <button id="copyBtn" onclick="copySelection()"><img src="assets/copy.svg"></button>
+            <button id="pasteBtn" onclick="pasteClipboard()"><img src="assets/paste.svg"></button>
+            <button id="boldBtn" onclick="formatText('bold')"><img src="assets/bold.svg"></button>
+            <button id="italicBtn" onclick="formatText('italic')"><img src="assets/italic.svg"></button>
+            <button id="strikethroughBtn" onclick="formatText('strikethrough')"><img src="assets/strikethrough.svg"></button>
+            <button id="headingBtn"><img src="assets/heading.svg"></button>
+            <div class="dropdown-menu" id="headingMenu">
+                <button data-level="1">Heading 1</button>
+                <button data-level="2">Heading 2</button>
+                <button data-level="3">Heading 3</button>
+                <button data-level="4">Heading 4</button>
+                <button data-level="5">Heading 5</button>
+                <button data-level="6">Heading 6</button>
+            </div>
+        </div>
         <footer>
             <p>Developed by Oswald Scheuren for <span class="accent-text">YSWS 3am Contest</span></p>
         </footer>
