@@ -110,6 +110,7 @@ h1, h2 {
   flex: 1;
   resize: none;
   margin: 10px;
+  white-space: pre-wrap;
 }
 
 #noteTitleInput {
